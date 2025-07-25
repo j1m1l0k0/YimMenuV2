@@ -11,53 +11,44 @@
 #include "game/gta/Scripts.hpp"
 #include "game/backend/NativeHooks.hpp"
 
-// test only rain money :P - is working and undetectable
-void spawn_money_rain_in_front_of_player(int numBags = 10, float distance = 2.0f)
-{
-	Ped playerPed = PLAYER::PLAYER_PED_ID();
-
-	if (!ENTITY::DOES_ENTITY_EXIST(playerPed))
-		return;
-
-	// Player position and direction
-	Vector3 pos = ENTITY::GET_ENTITY_COORDS(playerPed, true);
-	Vector3 forward = ENTITY::GET_ENTITY_FORWARD_VECTOR(playerPed);
-
-	// Position where money will be generated (in front of the player)
-	Vector3 spawnPos = {
-	    pos.x + forward.x * distance,
-	    pos.y + forward.y * distance,
-	    pos.z + forward.z * distance};
-
-	// Money bag generation loop
-	for (int i = 0; i < numBags; i++)
-	{
-		// Random variation in positioning to make it look like “rain”
-		float x = spawnPos.x + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
-		float y = spawnPos.y + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
-		float z = spawnPos.z + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
-
-		int amount = 10000; // fixed value per bag of money
-
-		// Creates the money pickup
-		//src: https://wiki.rage.mp/wiki/Pickups
-		OBJECT::CREATE_AMBIENT_PICKUP(
-		    0xFE18F3AF, // PICKUP_MONEY_VARIABLE
-//			0x5DE0AD3E,	//PICKUP_MONEY_WALLET
-		    x,
-		    y,
-		    z,
-		    0,
-		    amount,
-		    0,
-		    true,
-		    true);
-	}
-}
-
-
 namespace YimMenu::Submenus
 {
+	void spawn_money_rain_in_front_of_player(int numBags = 10, float distance = 2.0f)
+	{
+		Ped playerPed = PLAYER::PLAYER_PED_ID();
+
+		if (!ENTITY::DOES_ENTITY_EXIST(playerPed))
+			return;
+
+		Vector3 pos = ENTITY::GET_ENTITY_COORDS(playerPed, true);
+		Vector3 forward = ENTITY::GET_ENTITY_FORWARD_VECTOR(playerPed);
+
+		Vector3 spawnPos = {
+			pos.x + forward.x * distance,
+			pos.y + forward.y * distance,
+			pos.z + forward.z * distance};
+
+		for (int i = 0; i < numBags; i++)
+		{
+			float x = spawnPos.x + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
+			float y = spawnPos.y + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
+			float z = spawnPos.z + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
+
+			int amount = 10000;
+
+			OBJECT::CREATE_AMBIENT_PICKUP(
+				0xFE18F3AF, // PICKUP_MONEY_VARIABLE
+				x,
+				y,
+				z,
+				0,
+				amount,
+				0,
+				true,
+				true);
+		}
+	}
+	
 	std::shared_ptr<Category> BuildSpawnPedMenu()
 	{
 		auto menu = std::make_shared<Category>("Spawn Ped");
