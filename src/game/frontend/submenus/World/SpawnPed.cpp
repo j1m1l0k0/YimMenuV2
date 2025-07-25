@@ -19,27 +19,27 @@ void spawn_money_rain_in_front_of_player(int numBags = 10, float distance = 2.0f
 	if (!ENTITY::DOES_ENTITY_EXIST(playerPed))
 		return;
 
-	// Posição e direção do jogador
+	// Player position and direction
 	Vector3 pos = ENTITY::GET_ENTITY_COORDS(playerPed, true);
 	Vector3 forward = ENTITY::GET_ENTITY_FORWARD_VECTOR(playerPed);
 
-	// Posição onde o dinheiro será gerado (na frente do jogador)
+	// Position where money will be generated (in front of the player)
 	Vector3 spawnPos = {
 	    pos.x + forward.x * distance,
 	    pos.y + forward.y * distance,
 	    pos.z + forward.z * distance};
 
-	// Loop de geração dos sacos de dinheiro
+	// Money bag generation loop
 	for (int i = 0; i < numBags; i++)
 	{
-		// Variação aleatória no posicionamento para parecer uma “chuva”
+		// Random variation in positioning to make it look like “rain”
 		float x = spawnPos.x + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
 		float y = spawnPos.y + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
 		float z = spawnPos.z + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
 
-		int amount = 5000; // valor fixo por saco de dinheiro
+		int amount = 10000; // fixed value per bag of money
 
-		// Cria o pickup de dinheiro
+		// Creates the money pickup
 		//src: https://wiki.rage.mp/wiki/Pickups
 		OBJECT::CREATE_AMBIENT_PICKUP(
 		    0xFE18F3AF, // PICKUP_MONEY_VARIABLE
