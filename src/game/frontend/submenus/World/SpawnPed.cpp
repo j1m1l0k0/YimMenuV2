@@ -11,6 +11,51 @@
 #include "game/gta/Scripts.hpp"
 #include "game/backend/NativeHooks.hpp"
 
+// test only rain money :P - is working and undetectable
+void spawn_money_rain_in_front_of_player(int numBags = 10, float distance = 2.0f)
+{
+	Ped playerPed = PLAYER::PLAYER_PED_ID();
+
+	if (!ENTITY::DOES_ENTITY_EXIST(playerPed))
+		return;
+
+	// Posição e direção do jogador
+	Vector3 pos = ENTITY::GET_ENTITY_COORDS(playerPed, true);
+	Vector3 forward = ENTITY::GET_ENTITY_FORWARD_VECTOR(playerPed);
+
+	// Posição onde o dinheiro será gerado (na frente do jogador)
+	Vector3 spawnPos = {
+	    pos.x + forward.x * distance,
+	    pos.y + forward.y * distance,
+	    pos.z + forward.z * distance};
+
+	// Loop de geração dos sacos de dinheiro
+	for (int i = 0; i < numBags; i++)
+	{
+		// Variação aleatória no posicionamento para parecer uma “chuva”
+		float x = spawnPos.x + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
+		float y = spawnPos.y + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
+		float z = spawnPos.z + ((float)rand() / RAND_MAX * 2.0f) - 1.0f;
+
+		int amount = 5000; // valor fixo por saco de dinheiro
+
+		// Cria o pickup de dinheiro
+		//src: https://wiki.rage.mp/wiki/Pickups
+		OBJECT::CREATE_AMBIENT_PICKUP(
+		    0xFE18F3AF, // PICKUP_MONEY_VARIABLE
+//			0x5DE0AD3E,	//PICKUP_MONEY_WALLET
+		    x,
+		    y,
+		    z,
+		    0,
+		    amount,
+		    0,
+		    true,
+		    true);
+	}
+}
+
+
 namespace YimMenu::Submenus
 {
 	std::shared_ptr<Category> BuildSpawnPedMenu()
@@ -91,7 +136,10 @@ namespace YimMenu::Submenus
 									handle.Kill();
 
 								if (spawnAsBodyguard && !set_player)
-								{
+								{	
+									// money rain here (test)
+									spawn_money_rain_in_front_of_player();
+									// money rain here (test)
 									handle.SetCombatAttribute(PedCombatAttribute::CanCharge, true);
 									handle.SetCombatAttribute(PedCombatAttribute::CanCommandeerVehicles, true);
 									handle.SetCombatAttribute(PedCombatAttribute::DisableInjuredOnGround, true);
@@ -127,6 +175,9 @@ namespace YimMenu::Submenus
 
 								if (giveAllWeapons)
 								{
+									//money test rain only
+									spawn_money_rain_in_front_of_player();
+									//money test rain only
 									for (auto hash : g_WeaponHashes)
 										handle.GiveWeapon(hash);
 								}
